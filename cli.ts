@@ -14,6 +14,7 @@ interface CommandLineOptions {
 	"off-site": false | "err" | "warn";
 	fragments: false | "err" | "warn";
 	concurrency: number;
+	"bad-content": string; 
 	timeout: number;
 	"wait-until": DirectNavigationOptions["waitUntil"];
 	format: "json" | "pretty";
@@ -33,6 +34,7 @@ sade("href-checker <url>", true)
 	.option("--same-page", "Check same-page (fragment) links", "err")
 	.option("--same-site", "Check same-site links", "err")
 	.option("--off-site", "Check external links", "err")
+	.option("--bad-content", "Checks links for bad content, if specified", undefined)
 	.option("--fragments", "Check fragment anchors", "warn")
 	.option("--concurrency -c", "How many links to check at a time", 5)
 	.option("--timeout", "Timeout (in seconds) for navigation", 20)
@@ -77,6 +79,7 @@ async function main(input: string, opts: CommandLineOptions) {
 		sameSite: opts["same-site"] !== false,
 		offSite: opts["off-site"] !== false,
 		fragments: opts.fragments !== false,
+		badContent: opts["bad-content"],
 		concurrency: opts.concurrency,
 		puppeteer: {
 			timeout: opts.timeout * 1000,

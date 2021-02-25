@@ -11,6 +11,8 @@ export interface Options {
 	fragments: boolean;
 	/** How many links to check at a time? */
 	concurrency: number;
+	/** Fail if this text exists on page. */
+	badContent?: string;
 	puppeteer: {
 		timeout: puppeteer.DirectNavigationOptions["timeout"];
 		waitUntil: puppeteer.DirectNavigationOptions["waitUntil"];
@@ -164,6 +166,15 @@ async function isLinkValid(
 			fragExists = await isFragmentValid(url.hash, page);
 		}
 		const status = response ? response.status() : undefined;
+		if (options.badContent) {
+			const html: string = await page.$eval(
+				"body",
+				e => e.outerHTML,
+			);
+			if (html.search(options.badContent) !== -1) {
+				throw new Error(`Bad content found at ${url}: ${options.badContent}`);
+			}
+		}
 		return { pageExists, fragExists, status };
 	} catch (error) {
 		return { error };
