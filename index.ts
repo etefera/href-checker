@@ -9,6 +9,8 @@ export interface Options {
 	offSite: boolean;
 	/** Check existence of fragment links outside the current page. */
 	fragments: boolean;
+	/** Allow potential caching of scanned pages. */
+	cacheEnabled: boolean;
 	/** How many links to check at a time? */
 	concurrency: number;
 	/** Fail if this text exists on page. */
@@ -24,6 +26,7 @@ const defaults: Options = {
 	sameSite: true,
 	offSite: true,
 	fragments: true,
+	cacheEnabled: false,
 	concurrency: 5,
 	puppeteer: {
 		timeout: 20_000,
@@ -59,6 +62,7 @@ export async function* checkLinks(
 	const browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
+		await page.setCacheEnabled(opts.cacheEnabled);
 		const response = await page.goto(url.href, opts.puppeteer);
 		if (!response || !response.ok()) {
 			const reason = response ? `. HTTP ${response.status()}` : "";
