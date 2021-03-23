@@ -162,6 +162,7 @@ async function isLinkValid(
 > {
 	const url = new URL(link);
 	const page = await browser.newPage();
+	await page.setCacheEnabled(options.cacheEnabled);
 	try {
 		const response = await page.goto(link, options.puppeteer);
 		const pageExists = !response || response.ok();
