@@ -116,7 +116,7 @@ async function main(input: string, opts: CommandLineOptions) {
 	let hasFailures = false;
 	for await (const result of checkLinks(url, options)) {
 		const resultType = getResultType(result, outputOptions);
-		if (resultType === ResultType.fail) hasFailures = true;
+		if (resultType === ResultType.fail || resultType === ResultType.err) hasFailures = true;
 		const output = formatOutput(result, resultType, outputOptions);
 		if (output) console.log(output);
 	}
